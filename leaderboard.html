@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- (Keep all the identical CSS styles from your previous leaderboard.html in the <head> here) -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorace | Live Leaderboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap');
+
+        body {
+            background: linear-gradient(135deg, #012C6D 0%, #0345a3 50%, #012C6D 100%) !important;
+            background-size: 300% 300%;
+            animation: festiveGradient 10s ease infinite;
+            font-family: 'Nunito', sans-serif;
+            color: #333;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        @keyframes festiveGradient {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        body::before {
+            content: '✨  🎉  ✨  🎈  ✨  🎊  ✨  🌟';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            font-size: 28px;
+            color: rgba(255, 209, 0, 0.2);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-evenly;
+            align-content: space-evenly;
+            line-height: 180px;
+            letter-spacing: 120px;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatSparkles 25s linear infinite;
+        }
+
+        @keyframes floatSparkles {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            100% {
+                transform: translateY(-180px) rotate(15deg);
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Baloo 2', cursive;
+            font-weight: 800;
+        }
+
+        .merdeka-title {
+            color: #FFD100;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 4px 0 #d96a00, 0 0 15px rgba(255, 209, 0, 0.6), 2px 2px 5px rgba(0, 0, 0, 0.5);
+            animation: bouncePulse 2s infinite alternate cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            margin-bottom: 5px;
+        }
+
+        @keyframes bouncePulse {
+            0% {
+                transform: scale(1) rotate(-1deg);
+                text-shadow: 0 4px 0 #d96a00, 0 0 15px rgba(255, 209, 0, 0.4);
+            }
+
+            100% {
+                transform: scale(1.05) rotate(1deg);
+                text-shadow: 0 4px 0 #d96a00, 0 0 25px rgba(255, 209, 0, 0.8);
+            }
+        }
+
+        .merdeka-subtitle {
+            color: #fff;
+            letter-spacing: 1px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+        }
+
+        .merdeka-card {
+            background-color: #ffffff;
+            border: 4px solid #FFD100;
+            border-radius: 28px;
+            box-shadow: 0 12px 0 rgba(1, 44, 109, 0.4), 0 20px 40px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: visible;
+            margin-bottom: 40px;
+        }
+
+        .merdeka-card::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            height: 12px;
+            background: #ED1C24;
+            border-radius: 24px 24px 0 0;
+            z-index: 0;
+        }
+
+        .jpp-logo {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 20px;
+            filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.4));
+            animation: floatLogo 4s ease-in-out infinite;
+        }
+
+        @keyframes floatLogo {
+            0% {
+                transform: translateY(0) rotate(-2deg);
+            }
+
+            50% {
+                transform: translateY(-12px) rotate(2deg);
+            }
+
+            100% {
+                transform: translateY(0) rotate(-2deg);
+            }
+        }
+
+        .timeline-item {
+            border-bottom: 3px dashed #e2e8f0;
+            transition: all 0.3s ease;
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #fff;
+        }
+
+        .timeline-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Thumbnail Hover System */
+        .evidence-thumb {
+            width: 45px;
+            height: 45px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #FFD100;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .evidence-thumb:hover {
+            transform: scale(3) translate(-20px, 0);
+            z-index: 100;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+
+    <div class="container mt-5" style="max-width: 700px;">
+        <div class="text-center mb-5">
+            <img src="LOGO JPP PMTG (1).jpg" alt="JPP Logo" class="jpp-logo mb-3">
+            <h1 class="merdeka-title display-5 fw-bold">🏆 MERDEKA EXPLORACE 🇲🇾</h1>
+            <p class="merdeka-subtitle text-uppercase">⚡ Live Tracking & Leaderboard ⚡</p>
+        </div>
+
+        <div id="leaderboardContainer" class="row gy-4 pb-5">
+            <div class="text-center" style="color: #FFD100;">Loading live data...</div>
+        </div>
+    </div>
+
+    <script>
+        const supabaseUrl = 'https://ysugblnksyoblxuspvlx.supabase.co';
+        const supabaseKey = 'sb_publishable_TEC3bOleIhg-UDfxCne-Fw_IRIUthUh';
+        const { createClient } = supabase;
+        const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
+        const container = document.getElementById('leaderboardContainer');
+
+        async function fetchAndRenderLeaderboard() {
+            const { data: ranks, error: rankError } = await supabaseClient
+                .from('live_leaderboard')
+                .select('*');
+
+            // NEW: Fetch image_url as well
+            const { data: logs, error: logError } = await supabaseClient
+                .from('progress_logs')
+                .select('group_id, cleared_at, image_url, checkpoints ( id, location_name )')
+                .order('cleared_at', { ascending: true });
+
+            if (rankError || logError) {
+                container.innerHTML = '<div class="text-center" style="color: #FFD100;">Error loading live data. Please refresh.</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+
+            ranks.forEach((rank, index) => {
+                const groupLogs = logs.filter(l => l.group_id === rank.group_id);
+                let timelineHtml = '<ul class="list-group list-group-flush mt-3">';
+
+                if (groupLogs.length === 0) {
+                    timelineHtml += '<li class="list-group-item text-muted text-center small bg-transparent border-0">Waiting at Start Line...</li>';
+                } else {
+                    groupLogs.forEach(log => {
+                        const timeString = new Date(log.cleared_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                        const locName = log.checkpoints.location_name || `Checkpoint ${log.checkpoints.id}`;
+
+                        // Render photo thumbnail if the group uploaded one
+                        const photoHtml = log.image_url
+                            ? `<a href="${log.image_url}" target="_blank"><img src="${log.image_url}" class="evidence-thumb ms-3" alt="Evidence"></a>`
+                            : '';
+
+                        timelineHtml += `
+                        <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent px-2 timeline-item">
+                            <span class="small text-secondary fw-semibold">CP ${log.checkpoints.id} - ${locName}</span>
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-secondary rounded-pill font-monospace fs-6">${timeString}</span>
+                                ${photoHtml}
+                            </div>
+                        </li>`;
+                    });
+                }
+                timelineHtml += '</ul>';
+
+                const borderClass = index === 0 ? 'border border-warning border-3' : '';
+                const cardHtml = `
+                <div class="col-12">
+                    <div class="card merdeka-card mb-3 ${borderClass}">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4 class="mb-0 fw-bold" style="color: #012C6D;">#${index + 1} - ${rank.group_name}</h4>
+                                <span class="badge" style="background-color: #ED1C24; font-size: 1rem;">${rank.checkpoints_cleared} / 7</span>
+                            </div>
+                            ${timelineHtml}
+                        </div>
+                    </div>
+                </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+        }
+
+        fetchAndRenderLeaderboard();
+
+        supabaseClient
+            .channel('public:progress_logs')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'progress_logs' }, payload => {
+                fetchAndRenderLeaderboard();
+            })
+            .subscribe();
+
+    </script>
+</body>
+
+</html>

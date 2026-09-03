@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorace | Checkpoint 7</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap');
+
+        body {
+            background: linear-gradient(135deg, #012C6D 0%, #0345a3 50%, #012C6D 100%) !important;
+            background-size: 300% 300%;
+            animation: festiveGradient 10s ease infinite;
+            font-family: 'Nunito', sans-serif;
+            color: #333;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        @keyframes festiveGradient {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        body::before {
+            content: '✨  🎉  ✨  🎈  ✨  🎊  ✨  🌟';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            font-size: 28px;
+            color: rgba(255, 209, 0, 0.2);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-evenly;
+            align-content: space-evenly;
+            line-height: 180px;
+            letter-spacing: 120px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Baloo 2', cursive;
+            font-weight: 800;
+        }
+
+        .merdeka-title {
+            color: #FFD100;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 4px 0 #d96a00, 0 0 15px rgba(255, 209, 0, 0.6), 2px 2px 5px rgba(0, 0, 0, 0.5);
+            animation: bouncePulse 2s infinite alternate cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            margin-bottom: 5px;
+        }
+
+        @keyframes bouncePulse {
+            0% {
+                transform: scale(1) rotate(-1deg);
+                text-shadow: 0 4px 0 #d96a00, 0 0 15px rgba(255, 209, 0, 0.4);
+            }
+
+            100% {
+                transform: scale(1.05) rotate(1deg);
+                text-shadow: 0 4px 0 #d96a00, 0 0 25px rgba(255, 209, 0, 0.8);
+            }
+        }
+
+        .merdeka-card {
+            background-color: #ffffff;
+            border: 4px solid #FFD100;
+            border-radius: 28px;
+            box-shadow: 0 12px 0 rgba(1, 44, 109, 0.4), 0 20px 40px rgba(0, 0, 0, 0.4);
+            animation: bounceIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0;
+            transform: translateY(40px) scale(0.9);
+            position: relative;
+            overflow: visible;
+            margin-bottom: 40px;
+        }
+
+        .merdeka-card::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            height: 12px;
+            background: #ED1C24;
+            border-radius: 24px 24px 0 0;
+            z-index: 0;
+        }
+
+        .merdeka-card .card-body {
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes bounceIn {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .btn-merdeka {
+            background: #ED1C24;
+            color: white;
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.3rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border: none;
+            border-radius: 18px;
+            padding: 14px 20px;
+            box-shadow: 0 8px 0 #a00b11, 0 10px 20px rgba(237, 28, 36, 0.4);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            z-index: 1;
+            margin-top: 10px;
+        }
+
+        .btn-merdeka:hover,
+        .btn-merdeka:focus {
+            color: white;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 0 #a00b11, 0 15px 25px rgba(237, 28, 36, 0.6);
+            background: #ff2a33;
+        }
+
+        .form-control,
+        .form-select {
+            border: 3px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 14px 18px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e293b;
+            background-color: #f8fafc;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #FFD100;
+            box-shadow: 0 0 0 5px rgba(255, 209, 0, 0.4);
+            background-color: #fff;
+            outline: none;
+        }
+
+        .jpp-logo {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 20px;
+            filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.4));
+            animation: floatLogo 4s ease-in-out infinite;
+        }
+
+        @keyframes floatLogo {
+            0% {
+                transform: translateY(0) rotate(-2deg);
+                filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.4));
+            }
+
+            50% {
+                transform: translateY(-12px) rotate(2deg);
+                filter: drop-shadow(0px 15px 15px rgba(0, 0, 0, 0.3));
+            }
+
+            100% {
+                transform: translateY(0) rotate(-2deg);
+                filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.4));
+            }
+        }
+
+        .header-badge {
+            display: inline-block;
+            background: #FFD100;
+            color: #012C6D;
+            padding: 6px 16px;
+            border-radius: 24px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            transform: rotate(-2deg);
+        }
+
+        /* Lock Modal */
+        body.swal2-shown {
+            height: 100vh !important;
+            overflow-y: hidden !important;
+        }
+
+        .swal2-container {
+            position: fixed !important;
+            inset: 0 !important;
+            z-index: 99999 !important;
+            animation: none !important;
+            transform: none !important;
+        }
+
+        .swal2-popup {
+            animation: none !important;
+            transform: none !important;
+            margin: auto !important;
+        }
+
+        div:where(.swal2-container).swal2-center>.swal2-popup {
+            grid-column: 2;
+            grid-row: 2;
+            align-self: center;
+            justify-self: center;
+            transform: none !important;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5" style="max-width: 450px;">
+        <div class="text-center mb-4">
+            <img src="LOGO JPP PMTG (1).jpg" alt="JPP PMTG Logo" class="jpp-logo">
+            <!-- CHANGE #1: The Title -->
+            <h2 class="merdeka-title fs-3">🇲🇾 CHECKPOINT 7 CHECK-IN</h2>
+        </div>
+
+        <div class="card merdeka-card">
+            <div class="card-body text-center p-4">
+                <div class="header-badge">⚡ QR Check-In Portal</div>
+
+                <h4 class="mb-2 text-dark mt-2 fw-bold" style="color: #012C6D !important;">1. Select Group</h4>
+                <select id="groupId" class="form-select mb-4" required>
+                    <option value="" selected disabled>Select your Group Name</option>
+                </select>
+
+                <h4 class="mb-2 text-dark fw-bold" style="color: #012C6D !important;">2. Snap Evidence Photo</h4>
+                <input type="file" id="photoUpload" accept="image/*" capture="environment" class="form-control mb-4"
+                    required>
+
+                <button id="submitBtn" class="btn btn-merdeka w-100" onclick="verifyCheckpoint()">📍 Submit & Check In
+                    🚀</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const supabaseUrl = 'https://ysugblnksyoblxuspvlx.supabase.co';
+        const supabaseKey = 'sb_publishable_TEC3bOleIhg-UDfxCne-Fw_IRIUthUh';
+        const { createClient } = supabase;
+        const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
+        // CHANGE #2: The Checkpoint ID
+        const THIS_CHECKPOINT_ID = 7;
+
+        async function loadGroups() {
+            const { data: groups, error } = await supabaseClient.from('groups').select('*').order('id');
+            if (error) return;
+            const select = document.getElementById('groupId');
+            groups.forEach(g => {
+                select.appendChild(new Option(g.name, g.id));
+            });
+        }
+
+        function fireConfetti() {
+            const duration = 2000;
+            const end = Date.now() + duration;
+            (function frame() {
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#FFD100', '#ED1C24', '#012C6D', '#ffffff'] });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#FFD100', '#ED1C24', '#012C6D', '#ffffff'] });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
+        }
+
+        async function verifyCheckpoint() {
+            const groupId = parseInt(document.getElementById('groupId').value);
+            const photoInput = document.getElementById('photoUpload');
+            const submitBtn = document.getElementById('submitBtn');
+
+            if (!groupId) return showError("Please select your group.");
+            if (photoInput.files.length === 0) return showError("Please take or upload an evidence photo!");
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '⚡ Uploading Photo...';
+
+            try {
+                // 1. Check if they already checked in here to prevent duplicate logs
+                const { data: existingLog, error: checkError } = await supabaseClient
+                    .from('progress_logs')
+                    .select('id')
+                    .eq('group_id', groupId)
+                    .eq('checkpoint_id', THIS_CHECKPOINT_ID);
+
+                if (checkError) throw checkError;
+                if (existingLog && existingLog.length > 0) {
+                    throw new Error("Your group has already checked in at this checkpoint!");
+                }
+
+                // 2. Upload the Photo to Supabase Storage
+                const file = photoInput.files[0];
+                const fileExt = file.name.split('.').pop();
+                const fileName = `group_${groupId}_cp_${THIS_CHECKPOINT_ID}_${Date.now()}.${fileExt}`;
+
+                const { data: uploadData, error: uploadError } = await supabaseClient
+                    .storage
+                    .from('checkpoint_images')
+                    .upload(fileName, file);
+
+                if (uploadError) throw new Error("Image upload failed: " + uploadError.message);
+
+                // Get the public URL for the newly uploaded image
+                const { data: publicUrlData } = supabaseClient.storage.from('checkpoint_images').getPublicUrl(fileName);
+                const imageUrl = publicUrlData.publicUrl;
+
+                // 3. Log progress into the database WITH the image URL
+                submitBtn.innerHTML = '⚡ Recording Time...';
+                const { error: insertError } = await supabaseClient
+                    .from('progress_logs')
+                    .insert([{
+                        group_id: groupId,
+                        checkpoint_id: THIS_CHECKPOINT_ID,
+                        image_url: imageUrl
+                    }]);
+
+                if (insertError) throw insertError;
+
+                // 4. Success Popup
+                fireConfetti();
+                Swal.fire({
+                    title: '★ Check-In Complete! ★',
+                    html: `
+                        <hr>
+                        <p class="text-muted small mb-2">Time and photo successfully recorded.</p>
+                        <h4 class="mt-3 text-dark fw-bold">Proceed to your next destination!</h4>
+                    `,
+                    icon: 'success',
+                    confirmButtonColor: '#FFD100',
+                    background: '#fffbeb',
+                    color: '#012C6D',
+                    backdrop: `rgba(1, 44, 109, 0.8)`
+                }).then(() => {
+                    // Reset form after successful submission
+                    document.getElementById('groupId').value = '';
+                    photoInput.value = '';
+                });
+
+            } catch (err) {
+                console.error("Error:", err);
+                showError(err.message || "Unknown error occurred");
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '📍 Submit & Check In 🚀';
+        }
+
+        function showError(message) {
+            Swal.fire({
+                title: 'Hold Up!', text: message, icon: 'warning',
+                confirmButtonColor: '#ED1C24', background: '#fef2f2',
+                color: '#991b1b', backdrop: `rgba(1, 44, 109, 0.6)`
+            });
+        }
+
+        window.onload = loadGroups;
+    </script>
+</body>
+
+</html>

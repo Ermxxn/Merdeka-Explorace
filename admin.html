@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- (Keep all the identical CSS styles from your previous admin.html in the <head> here) -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorace | Admin Command Center</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap');
+
+        body {
+            background: linear-gradient(135deg, #012C6D 0%, #0345a3 50%, #012C6D 100%) !important;
+            background-size: 300% 300%;
+            animation: festiveGradient 10s ease infinite;
+            font-family: 'Nunito', sans-serif;
+            color: #333;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        @keyframes festiveGradient {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        body::before {
+            content: '✨  🎉  ✨  🎈  ✨  🎊  ✨  🌟';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            font-size: 28px;
+            color: rgba(255, 209, 0, 0.2);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-evenly;
+            align-content: space-evenly;
+            line-height: 180px;
+            letter-spacing: 120px;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatSparkles 25s linear infinite;
+        }
+
+        @keyframes floatSparkles {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            100% {
+                transform: translateY(-180px) rotate(15deg);
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Baloo 2', cursive;
+            font-weight: 800;
+        }
+
+        .merdeka-title {
+            color: #FFD100;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 4px 0 #d96a00, 0 0 15px rgba(255, 209, 0, 0.6), 2px 2px 5px rgba(0, 0, 0, 0.5);
+            animation: bouncePulse 2s infinite alternate cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            margin-bottom: 5px;
+        }
+
+        @keyframes bouncePulse {
+            0% {
+                transform: scale(1) rotate(-1deg);
+                text-shadow: 0 4px 0 #d96a00, 0 0 15px rgba(255, 209, 0, 0.4);
+            }
+
+            100% {
+                transform: scale(1.05) rotate(1deg);
+                text-shadow: 0 4px 0 #d96a00, 0 0 25px rgba(255, 209, 0, 0.8);
+            }
+        }
+
+        .merdeka-card {
+            background-color: #ffffff;
+            border: 4px solid #FFD100;
+            border-radius: 28px;
+            box-shadow: 0 12px 0 rgba(1, 44, 109, 0.4), 0 20px 40px rgba(0, 0, 0, 0.4);
+            animation: bounceIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0;
+            transform: translateY(40px) scale(0.9);
+            position: relative;
+            overflow: visible;
+            margin-bottom: 40px;
+        }
+
+        .merdeka-card::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            height: 12px;
+            background: #ED1C24;
+            border-radius: 24px 24px 0 0;
+            z-index: 0;
+        }
+
+        .merdeka-card .card-body {
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes bounceIn {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .btn-merdeka {
+            background: #ED1C24;
+            color: white;
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.3rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border: none;
+            border-radius: 18px;
+            padding: 14px 20px;
+            box-shadow: 0 8px 0 #a00b11, 0 10px 20px rgba(237, 28, 36, 0.4);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            z-index: 1;
+            margin-top: 10px;
+        }
+
+        .btn-merdeka:hover,
+        .btn-merdeka:focus {
+            color: white;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 0 #a00b11, 0 15px 25px rgba(237, 28, 36, 0.6);
+            outline: none;
+            background: #ff2a33;
+        }
+
+        .btn-danger {
+            background: #ED1C24 !important;
+            border: none !important;
+            box-shadow: 0 6px 0 #a00b11 !important;
+            font-family: 'Baloo 2', cursive;
+            border-radius: 14px !important;
+            font-weight: 700 !important;
+            font-size: 1.2rem;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 9px 0 #a00b11 !important;
+        }
+
+        .btn-dark {
+            background: #012C6D !important;
+            border: none !important;
+            box-shadow: 0 6px 0 #011638 !important;
+            font-family: 'Baloo 2', cursive;
+            border-radius: 14px !important;
+            font-weight: 700 !important;
+            font-size: 1.2rem;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        }
+
+        .btn-dark:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 9px 0 #011638 !important;
+        }
+
+        .form-control,
+        .form-select {
+            border: 3px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 14px 18px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e293b;
+            background-color: #f8fafc;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #FFD100;
+            box-shadow: 0 0 0 5px rgba(255, 209, 0, 0.4), inset 0 2px 5px rgba(0, 0, 0, 0.02);
+            background-color: #fff;
+            outline: none;
+            transform: translateY(-2px);
+        }
+
+        .header-badge {
+            display: inline-block;
+            background: #FFD100;
+            color: #012C6D;
+            padding: 6px 16px;
+            border-radius: 24px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            transform: rotate(-2deg);
+        }
+    </style>
+</head>
+
+<body class="bg-light py-5">
+    <div class="container" style="max-width: 800px;">
+        <div class="text-center mb-4">
+            <h2 class="merdeka-title">👑 Admin Command Center</h2>
+            <p class="text-white">Manage Groups, Fix Check-Ins, and Reset Game State</p>
+        </div>
+
+        <div class="card merdeka-card mb-4">
+            <div class="card-body p-4">
+                <div class="header-badge">⚠️ Danger Zone</div>
+                <h4 class="text-dark mb-3" style="color: #012C6D !important;">Game Reset Control</h4>
+                <p class="text-muted small">Wipes all current progress logs so groups can start the explorace from the
+                    beginning.</p>
+                <button class="btn btn-danger fw-bold text-uppercase" onclick="resetGameProgress()">💥 Reset All
+                    Progress Logs 💥</button>
+            </div>
+        </div>
+
+        <div class="card merdeka-card mb-4">
+            <div class="card-body p-4">
+                <div class="header-badge">👥 Groups</div>
+                <h4 class="text-dark mb-3" style="color: #012C6D !important;">Manage Groups & Quantity</h4>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Select Group to Rename</label>
+                        <select id="groupSelect" class="form-select"></select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">New Group Name</label>
+                        <input type="text" id="newGroupName" class="form-control" placeholder="Enter new name">
+                    </div>
+                </div>
+                <button class="btn btn-merdeka mt-3" onclick="updateGroupName()">Save Group Name</button>
+                <hr class="my-4">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Total Active Groups Quantity (1 to 20)</label>
+                    <div class="input-group" style="max-width: 300px;">
+                        <input type="number" id="groupCountInput" class="form-control" min="1" max="20">
+                        <button class="btn btn-dark" onclick="resizeGroupsCount()">Apply Quantity</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW: Fix/Delete Specific Progress Logs Section -->
+        <div class="card merdeka-card mb-4">
+            <div class="card-body p-4">
+                <div class="header-badge">🛠️ Fix Mistakes</div>
+                <h4 class="text-dark mb-3" style="color: #012C6D !important;">Delete Specific Check-Ins</h4>
+                <p class="text-muted small">If a group scanned under the wrong name, select their group here to delete
+                    that specific false entry.</p>
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <select id="logGroupSelect" class="form-select" onchange="fetchGroupLogs()"></select>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-dark w-100" onclick="fetchGroupLogs()">Load Check-Ins</button>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <ul id="logListContainer" class="list-group">
+                        <!-- Logs will populate here -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const supabaseUrl = 'https://ysugblnksyoblxuspvlx.supabase.co';
+        const realKey = 'sb_publishable_TEC3bOleIhg-UDfxCne-Fw_IRIUthUh';
+        const { createClient } = supabase;
+        const supabaseClient = createClient(supabaseUrl, realKey);
+
+        async function initAdmin() {
+            await loadGroupsDropdowns();
+        }
+
+        async function loadGroupsDropdowns() {
+            const { data: groups, error } = await supabaseClient.from('groups').select('*').order('id');
+            if (error) return;
+
+            const groupSelect = document.getElementById('groupSelect');
+            const logGroupSelect = document.getElementById('logGroupSelect');
+            groupSelect.innerHTML = '';
+            logGroupSelect.innerHTML = '<option value="" selected disabled>Select Group to view logs...</option>';
+
+            groups.forEach(g => {
+                groupSelect.appendChild(new Option(g.name, g.id));
+                logGroupSelect.appendChild(new Option(g.name, g.id));
+            });
+        }
+
+        async function resetGameProgress() {
+            const result = await Swal.fire({ title: 'Are you sure?', text: "This wipes all progress logs!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#ED1C24', confirmButtonText: 'Yes, wipe it!' });
+            if (!result.isConfirmed) return;
+            const { error } = await supabaseClient.from('progress_logs').delete().neq('id', 0);
+            if (error) showAlert("Error resetting progress: " + error.message, "error");
+            else showAlert("All game progress logs have been successfully wiped!", "success");
+        }
+
+        async function updateGroupName() {
+            const id = document.getElementById('groupSelect').value;
+            const name = document.getElementById('newGroupName').value.trim();
+            if (!name) return showAlert("Please enter a valid group name.", "error");
+            const { error } = await supabaseClient.from('groups').update({ name }).eq('id', id);
+            if (error) showAlert("Error updating name: " + error.message, "error");
+            else { showAlert("Group name updated successfully!", "success"); loadGroupsDropdowns(); }
+        }
+
+        async function resizeGroupsCount() {
+            const count = parseInt(document.getElementById('groupCountInput').value);
+            if (isNaN(count) || count < 1 || count > 20) return showAlert("Please specify between 1 and 20 groups.", "error");
+            for (let i = 1; i <= count; i++) {
+                await supabaseClient.from('groups').upsert([{ id: i, name: `Group ${i}` }]);
+            }
+            showAlert(`Group quantity adjusted up to ${count}!`, "success");
+            loadGroupsDropdowns();
+        }
+
+        // --- NEW LOG MANAGEMENT LOGIC ---
+        async function fetchGroupLogs() {
+            const groupId = document.getElementById('logGroupSelect').value;
+            if (!groupId) return;
+
+            const listContainer = document.getElementById('logListContainer');
+            listContainer.innerHTML = '<li class="list-group-item text-center">Loading...</li>';
+
+            const { data, error } = await supabaseClient
+                .from('progress_logs')
+                .select('id, checkpoint_id, cleared_at')
+                .eq('group_id', groupId)
+                .order('cleared_at', { ascending: true });
+
+            if (error) {
+                listContainer.innerHTML = '<li class="list-group-item text-danger">Error loading logs</li>';
+                return;
+            }
+
+            if (data.length === 0) {
+                listContainer.innerHTML = '<li class="list-group-item text-muted text-center">No check-ins recorded for this group yet.</li>';
+                return;
+            }
+
+            listContainer.innerHTML = '';
+            data.forEach(log => {
+                const timeStr = new Date(log.cleared_at).toLocaleTimeString();
+                listContainer.innerHTML += `
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>Checkpoint ${log.checkpoint_id}</strong> <br>
+                            <span class="text-muted small">${timeStr}</span>
+                        </div>
+                        <button class="btn btn-sm btn-danger fw-bold" onclick="deleteSingleLog(${log.id})">Delete</button>
+                    </li>
+                `;
+            });
+        }
+
+        async function deleteSingleLog(logId) {
+            const result = await Swal.fire({ title: 'Delete Entry?', text: "Remove this check-in permanently?", icon: 'warning', showCancelButton: true, confirmButtonColor: '#ED1C24' });
+            if (!result.isConfirmed) return;
+
+            const { error } = await supabaseClient.from('progress_logs').delete().eq('id', logId);
+            if (error) {
+                showAlert("Error deleting log: " + error.message, "error");
+            } else {
+                fetchGroupLogs(); // Refresh the list
+            }
+        }
+
+        function showAlert(msg, type) {
+            Swal.fire({
+                title: type === 'success' ? 'Awesome!' : 'Oops!',
+                text: msg, icon: type,
+                confirmButtonColor: type === 'success' ? '#FFD100' : '#ED1C24'
+            });
+            if (type === 'success') confetti();
+        }
+
+        window.onload = initAdmin;
+    </script>
+</body>
+
+</html>
