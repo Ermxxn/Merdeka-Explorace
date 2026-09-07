@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- (Keep all the identical CSS styles from your previous admin.html in the <head> here) -->
 
 <head>
     <meta charset="UTF-8">
@@ -39,9 +38,10 @@
             }
         }
 
+        /* Fixed Festive Star Pattern Overlay (No structural transforms) */
         body::before {
             content: '✨  🎉  ✨  🎈  ✨  🎊  ✨  🌟';
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
@@ -56,17 +56,6 @@
             letter-spacing: 120px;
             pointer-events: none;
             z-index: 0;
-            animation: floatSparkles 25s linear infinite;
-        }
-
-        @keyframes floatSparkles {
-            0% {
-                transform: translateY(0) rotate(0deg);
-            }
-
-            100% {
-                transform: translateY(-180px) rotate(15deg);
-            }
         }
 
         .container {
@@ -234,6 +223,34 @@
             margin-bottom: 15px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
             transform: rotate(-2deg);
+        }
+
+        /* Permanently lock SweetAlert modal firmly in the center */
+        body.swal2-shown {
+            height: 100vh !important;
+            overflow-y: hidden !important;
+        }
+
+        .swal2-container {
+            position: fixed !important;
+            inset: 0 !important;
+            z-index: 99999 !important;
+            animation: none !important;
+            transform: none !important;
+        }
+
+        .swal2-popup {
+            animation: none !important;
+            transform: none !important;
+            margin: auto !important;
+        }
+
+        div:where(.swal2-container).swal2-center>.swal2-popup {
+            grid-column: 2;
+            grid-row: 2;
+            align-self: center;
+            justify-self: center;
+            transform: none !important;
         }
     </style>
 </head>
