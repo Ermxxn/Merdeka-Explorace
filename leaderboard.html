@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- (Keep all the identical CSS styles from your previous leaderboard.html in the <head> here) -->
 
 <head>
     <meta charset="UTF-8">
@@ -36,9 +35,10 @@
             }
         }
 
+        /* Fixed Festive Star Pattern Overlay (No structural transforms) */
         body::before {
             content: '✨  🎉  ✨  🎈  ✨  🎊  ✨  🌟';
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
@@ -53,17 +53,6 @@
             letter-spacing: 120px;
             pointer-events: none;
             z-index: 0;
-            animation: floatSparkles 25s linear infinite;
-        }
-
-        @keyframes floatSparkles {
-            0% {
-                transform: translateY(0) rotate(0deg);
-            }
-
-            100% {
-                transform: translateY(-180px) rotate(15deg);
-            }
         }
 
         .container {
@@ -212,7 +201,6 @@
                 .from('live_leaderboard')
                 .select('*');
 
-            // NEW: Fetch image_url as well
             const { data: logs, error: logError } = await supabaseClient
                 .from('progress_logs')
                 .select('group_id, cleared_at, image_url, checkpoints ( id, location_name )')
@@ -236,7 +224,6 @@
                         const timeString = new Date(log.cleared_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                         const locName = log.checkpoints.location_name || `Checkpoint ${log.checkpoints.id}`;
 
-                        // Render photo thumbnail if the group uploaded one
                         const photoHtml = log.image_url
                             ? `<a href="${log.image_url}" target="_blank"><img src="${log.image_url}" class="evidence-thumb ms-3" alt="Evidence"></a>`
                             : '';
